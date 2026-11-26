@@ -1,3 +1,4 @@
+
 package com.spaceshooterodyssey.entity;
 
 import jakarta.persistence.Entity;
@@ -5,9 +6,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
-
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+
+import java.time.LocalDate;
 
 @Entity
 public class Player {
@@ -30,9 +32,17 @@ public class Player {
     private int totalScore = 0;
 
     private int credits = 100;
+
     @ManyToOne
-@JoinColumn(name = "spaceship_id")
-private Spaceship spaceship;
+    @JoinColumn(name = "spaceship_id")
+    private Spaceship spaceship;
+
+    // Daily login reward tracking
+    @Column(name = "last_daily_reward_date")
+    private LocalDate lastDailyRewardDate;
+
+    @Column(name = "consecutive_login_days", nullable = false)
+    private int consecutiveLoginDays = 0;
 
     public Player() {
     }
@@ -84,14 +94,30 @@ private Spaceship spaceship;
     }
 
     public void setCredits(int credits) {
-    this.credits = credits;
-}
+        this.credits = credits;
+    }
 
     public Spaceship getSpaceship() {
-    return spaceship;
-}
+        return spaceship;
+    }
 
-public void setSpaceship(Spaceship spaceship) {
-    this.spaceship = spaceship;
-}
+    public void setSpaceship(Spaceship spaceship) {
+        this.spaceship = spaceship;
+    }
+
+    public LocalDate getLastDailyRewardDate() {
+        return lastDailyRewardDate;
+    }
+
+    public void setLastDailyRewardDate(LocalDate lastDailyRewardDate) {
+        this.lastDailyRewardDate = lastDailyRewardDate;
+    }
+
+    public int getConsecutiveLoginDays() {
+        return consecutiveLoginDays;
+    }
+
+    public void setConsecutiveLoginDays(int consecutiveLoginDays) {
+        this.consecutiveLoginDays = consecutiveLoginDays;
+    }
 }
