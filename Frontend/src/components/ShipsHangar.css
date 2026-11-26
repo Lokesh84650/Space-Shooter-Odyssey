@@ -1,0 +1,501 @@
+
+.premium-hangar {
+    --hangar-bg: #0a0d1c;
+    --hangar-panel: #11172b;
+    --hangar-border: rgba(137, 158, 218, 0.16);
+    color: #edf3ff;
+    padding: 35px;
+    margin: 35px 0;
+    border: 1px solid var(--hangar-border);
+    border-radius: 20px;
+    background:
+        radial-gradient(ellipse at 80% 0%, rgba(88, 54, 153, 0.15), transparent 40%),
+        linear-gradient(145deg, #10152a, #090c19 75%);
+    overflow: hidden;
+}
+
+.hangar-heading,
+.fleet-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.hangar-eyebrow,
+.featured-role,
+.fleet-role {
+    color: #9b8bff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.hangar-heading h2 {
+    margin: 9px 0;
+    font-size: 30px;
+    letter-spacing: 2px;
+}
+
+.hangar-heading h2 span {
+    color: #9b8bff;
+}
+
+.hangar-heading > div > p:last-child,
+.fleet-heading p {
+    color: #8995b5;
+    font-size: 13px;
+}
+
+.hangar-status {
+    color: #70e8b0;
+    font-size: 10px;
+    letter-spacing: 1px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.hangar-status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #70e8b0;
+    border-radius: 50%;
+    margin-right: 7px;
+    box-shadow: 0 0 10px #70e8b0;
+}
+
+.hangar-featured {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 35px;
+    margin-top: 30px;
+    padding: 25px;
+    border: 1px solid var(--hangar-border);
+    border-radius: 17px;
+    background: linear-gradient(120deg, #151d36, #101326);
+}
+
+.featured-art {
+    min-height: 340px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 13px;
+    background:
+        radial-gradient(ellipse, color-mix(in srgb, var(--ship-color) 18%, transparent), transparent 65%),
+        linear-gradient(145deg, #111b36, #080d1c);
+}
+
+.featured-grid {
+    position: absolute;
+    inset: 0;
+    opacity: .22;
+    background-image:
+        linear-gradient(rgba(123, 151, 220, .15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(123, 151, 220, .15) 1px, transparent 1px);
+    background-size: 35px 35px;
+    mask-image: linear-gradient(transparent, black, transparent);
+}
+
+.featured-orbit {
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border: 1px solid color-mix(in srgb, var(--ship-color) 45%, transparent);
+    border-radius: 50%;
+    box-shadow: 0 0 35px color-mix(in srgb, var(--ship-color) 15%, transparent);
+}
+
+.featured-orbit::before,
+.featured-orbit::after {
+    content: "";
+    position: absolute;
+    inset: 20px;
+    border: 1px dashed color-mix(in srgb, var(--ship-color) 35%, transparent);
+    border-radius: 50%;
+}
+
+.featured-orbit::after {
+    inset: -22px;
+    transform: rotateX(65deg);
+}
+
+.hangar-ship-art {
+    width: min(90%, 320px);
+    height: 235px;
+    overflow: visible;
+    filter: drop-shadow(0 0 18px color-mix(in srgb, var(--ship-color, #20d9ff) 40%, transparent));
+    animation: hangarShipFloat 4s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+}
+
+.featured-art .hangar-ship-art {
+    width: 85%;
+    max-width: 350px;
+}
+
+.featured-art-label {
+    position: absolute;
+    bottom: 17px;
+    color: #71809f;
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+@keyframes hangarShipFloat {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+.featured-info {
+    padding: 12px 5px;
+}
+
+.featured-topline,
+.featured-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.ship-rarity {
+    padding: 6px 12px;
+    border: 1px solid var(--ship-color);
+    border-radius: 20px;
+    color: var(--ship-color);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.ship-serial {
+    color: #71809f;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.featured-role {
+    margin-top: 30px;
+    color: var(--ship-color);
+}
+
+.featured-info h3 {
+    margin: 8px 0;
+    font-size: 36px;
+    letter-spacing: 1px;
+}
+
+.featured-description {
+    max-width: 470px;
+    color: #9ba8c6;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.featured-stats {
+    display: grid;
+    gap: 17px;
+    margin: 28px 0;
+}
+
+.hangar-stat-heading {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #9ba8c6;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.hangar-stat-heading strong {
+    color: white;
+}
+
+.hangar-stat-track {
+    height: 6px;
+    background: #242c45;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.hangar-stat-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    box-shadow: 0 0 12px currentColor;
+}
+
+.featured-footer {
+    padding: 14px 0;
+    border-top: 1px solid var(--hangar-border);
+    color: #9ba8c6;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.active-ship-label {
+    color: #70e8b0;
+}
+
+.hangar-details-button {
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px;
+    border: 1px solid var(--ship-color);
+    border-radius: 7px;
+    background: color-mix(in srgb, var(--ship-color) 9%, transparent);
+    color: var(--ship-color);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.hangar-details-button:hover {
+    background: color-mix(in srgb, var(--ship-color) 20%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--ship-color) 15%, transparent);
+}
+
+.hangar-extra-details {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #0b1122;
+    color: #aab6d1;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.fleet-heading {
+    margin: 38px 0 20px;
+}
+
+.fleet-heading h3 {
+    font-size: 19px;
+    letter-spacing: 2px;
+}
+
+.fleet-heading p {
+    margin-top: 6px;
+}
+
+.fleet-heading > span {
+    color: #9b8bff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.fleet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.fleet-card {
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--hangar-border);
+    border-radius: 13px;
+    background: linear-gradient(155deg, #151d35, #0d1223);
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+}
+
+.fleet-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--ship-color);
+}
+
+.fleet-selected {
+    border-color: var(--ship-color);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--ship-color) 12%, transparent);
+}
+
+.fleet-locked {
+    opacity: .78;
+}
+
+.fleet-card-top {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 14px 0;
+    color: #7786a7;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.fleet-rarity {
+    color: var(--ship-color);
+}
+
+.fleet-art {
+    height: 165px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px;
+    overflow: hidden;
+    border-radius: 9px;
+    background: radial-gradient(ellipse, color-mix(in srgb, var(--ship-color) 13%, transparent), #0b1122 70%);
+}
+
+.fleet-art .hangar-ship-art {
+    width: 90%;
+    height: 150px;
+}
+
+.ship-locked-art {
+    filter: grayscale(1) brightness(.6);
+}
+
+.fleet-lock-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    background: rgba(5, 8, 18, .25);
+}
+
+.fleet-card-info {
+    padding: 12px 15px 16px;
+}
+
+.fleet-role {
+    margin-bottom: 7px;
+    font-size: 9px;
+    color: var(--ship-color);
+}
+
+.fleet-card-info h4 {
+    font-size: 19px;
+    margin-bottom: 8px;
+}
+
+.fleet-description {
+    min-height: 58px;
+    color: #8996b4;
+    font-size: 11px;
+    line-height: 1.65;
+}
+
+.fleet-mini-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin: 15px 0;
+    padding: 11px 0;
+    border-top: 1px solid var(--hangar-border);
+    border-bottom: 1px solid var(--hangar-border);
+    color: #8290ae;
+    font-size: 10px;
+}
+
+.fleet-mini-stats strong {
+    color: #edf3ff;
+    margin-left: 3px;
+}
+
+.fleet-select-button,
+.fleet-selected-button {
+    width: 100%;
+    padding: 12px 7px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+.fleet-select-button {
+    border: 1px solid var(--ship-color);
+    color: var(--ship-color);
+    background: transparent;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.fleet-select-button:hover {
+    background: color-mix(in srgb, var(--ship-color) 15%, transparent);
+}
+
+.fleet-selected-button {
+    border: 1px solid rgba(112, 232, 176, .35);
+    background: rgba(112, 232, 176, .1);
+    color: #70e8b0;
+    cursor: default;
+}
+
+.fleet-unlock {
+    min-height: 58px;
+    padding: 9px;
+    border: 1px solid rgba(255, 190, 100, .2);
+    border-radius: 6px;
+    background: rgba(255, 190, 100, .04);
+}
+
+.fleet-unlock span {
+    color: #ffc66d;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.fleet-unlock p {
+    margin-top: 5px;
+    color: #8996b4;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+@media (max-width: 1000px) {
+    .hangar-featured {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-art {
+        min-height: 280px;
+    }
+
+    .fleet-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .premium-hangar {
+        padding: 17px;
+    }
+
+    .hangar-heading,
+    .fleet-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .hangar-heading h2 {
+        font-size: 24px;
+    }
+
+    .hangar-featured {
+        padding: 13px;
+    }
+
+    .featured-art {
+        min-height: 230px;
+    }
+
+    .featured-info h3 {
+        font-size: 28px;
+    }
+
+    .fleet-grid {
+        grid-template-columns: 1fr;
+    }
+}

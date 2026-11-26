@@ -1,0 +1,958 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #080b18;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+}
+
+.game-dashboard {
+    min-height: 100vh;
+    display: flex;
+    background:
+    radial-gradient(ellipse at 75% 10%, rgba(40, 62, 145, .15), transparent 45%),
+    #080b18;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+    width: 245px;
+    min-width: 245px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    padding: 30px 20px;
+    background: #0c1022;
+    border-right: 1px solid #202a48;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 65px;
+}
+
+.brand-icon {
+    font-size: 35px;
+}
+
+.brand h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #70dcff;
+    letter-spacing: 1px;
+}
+
+.menu-label,
+.top-label {
+    color: #647393;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.menu-label {
+    margin: 0 0 20px 10px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-menu a {
+    padding: 15px 13px;
+    color: #a9b6d2;
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 8px;
+    transition: .3s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+    color: #70dcff;
+    background: linear-gradient(90deg, #172d50, #151c36);
+    border-left: 3px solid #52d7ff;
+    box-shadow: 0 0 18px rgba(67, 188, 255, .08);
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    color: #647393;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.online-status {
+    color: #66e9b5;
+    margin-bottom: 15px;
+}
+
+.online-status span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+  border-radius: 50%;
+  background: #66e9b5;
+  margin-right: 8px;
+  box-shadow: 0 0 10px #66e9b5;
+}
+
+/* MAIN CONTENT */
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 4%;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.topbar h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 19px;
+  margin-top: 8px;
+  color: #70dcff;
+  text-shadow: 0 0 12px rgba(112, 220, 255, 0.4);
+}
+
+.player-mini-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #121a30;
+  border: 1px solid #263957;
+  padding: 10px 16px;
+  border-radius: 10px;
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #233b64;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+
+.player-mini-profile h4 {
+  font-size: 12px;
+}
+
+.player-mini-profile p {
+  color: #7f91b2;
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+/* HERO SECTION */
+
+.hero {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+  border: 1px solid #28466d;
+  border-radius: 16px;
+  padding: 55px 45px;
+  background:
+    radial-gradient(circle at 75% 50%, rgba(75, 82, 202, .35), transparent 35%),
+    linear-gradient(110deg, #101b37, #171b42 60%, #251b52);
+  box-shadow: inset 0 0 50px rgba(65, 120, 255, .08);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 470px;
+}
+
+.hero-tag {
+  display: inline-block;
+  color: #73dcff;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(25px, 3vw, 39px);
+  line-height: 1.4;
+  margin-bottom: 15px;
+}
+
+.hero h1 span {
+  color: #70dcff;
+  text-shadow: 0 0 20px rgba(80, 205, 255, .5);
+}
+
+.hero-content p {
+  max-width: 400px;
+  color: #aebbd8;
+  font-size: 13px;
+  line-height: 1.9;
+  margin-bottom: 25px;
+}
+
+.primary-btn {
+  background: linear-gradient(100deg, #2679e8, #7650ed);
+  color: white;
+  border: 1px solid #729bff;
+  border-radius: 7px;
+  padding: 14px 22px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(70, 123, 255, .3);
+  transition: .3s;
+}
+
+.primary-btn:hover,
+.mission-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px rgba(80, 170, 255, .5);
+}
+
+/* HERO SPACE VISUAL */
+
+.hero-visual {
+  position: absolute;
+  right: 5%;
+  top: 0;
+  width: 42%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.hero-ship {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(80px, 12vw, 150px);
+  transform: rotate(-35deg);
+  filter: drop-shadow(0 0 25px #58caff);
+  animation: floatShip 4s ease-in-out infinite;
+}
+
+@keyframes floatShip {
+  0%, 100% {
+    transform: translateY(0) rotate(-35deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-35deg);
+  }
+}
+
+.planet {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.planet-one {
+  width: 85px;
+  height: 85px;
+  background: radial-gradient(circle at 30% 30%, #b8a0ff, #4e3e9b 65%, #1c1a54);
+  top: 14%;
+  right: 15%;
+  box-shadow: 0 0 40px #6045c5;
+}
+
+.planet-two {
+  width: 28px;
+  height: 28px;
+  background: #5cceff;
+  bottom: 17%;
+  left: 12%;
+  box-shadow: 0 0 20px #5cceff;
+}
+
+.orbit {
+  position: absolute;
+  width: 230px;
+  height: 90px;
+  border: 1px solid rgba(111, 205, 255, .3);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+}
+
+.orbit-two {
+  transform: rotate(45deg);
+  width: 280px;
+  height: 120px;
+  border-color: rgba(162, 117, 255, .3);
+}
+
+.hero-glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  background: #4b59e8;
+  filter: blur(100px);
+  opacity: .3;
+}
+
+/* STATISTICS */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 25px 0 45px;
+}
+
+.game-stat {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 22px 16px;
+  background: linear-gradient(145deg, #151e36, #10162a);
+  border: 1px solid #253655;
+  border-radius: 12px;
+  transition: .3s;
+}
+
+.game-stat:hover {
+  transform: translateY(-5px);
+  border-color: #55caff;
+  box-shadow: 0 0 20px rgba(66, 166, 255, .1);
+}
+
+.stat-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.blue { background: #17365d; }
+.purple { background: #30234f; }
+.gold { background: #493b25; }
+.green { background: #17463d; }
+
+.game-stat p {
+  color: #8090ae;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.game-stat h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 22px;
+  margin-bottom: 5px;
+  color: #70dcff;
+  text-shadow: 0 0 12px rgba(112, 220, 255, 0.4);
+}
+
+.game-stat span {
+  font-size: 10px;
+  color: #6f819f;
+}
+
+/* SECTION HEADINGS */
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 19px;
+  margin-top: 9px;
+}
+
+.mission-count {
+  color: #6bdcff;
+  font-size: 10px;
+  letter-spacing: 1px;
+  border: 1px solid #28547a;
+  padding: 9px 13px;
+  border-radius: 5px;
+  background: #10243a;
+}
+
+/* MISSION CARDS */
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.mission-card,
+.locked-card {
+  background: #111a30;
+  border: 1px solid #263c5d;
+  border-radius: 13px;
+  overflow: hidden;
+  transition: .3s;
+}
+
+.mission-card:hover,
+.locked-card:hover {
+  border-color: #5ccfff;
+  transform: translateY(-4px);
+}
+
+.mission-art {
+  height: 135px;
+  background:
+    radial-gradient(circle at 50% 80%, #4658a9, transparent 30%),
+    linear-gradient(120deg, #162b4c, #292052);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.mission-art span {
+  font-size: 65px;
+  filter: drop-shadow(0 0 15px #659dff);
+}
+
+.mission-art label {
+  color: #78e4ff;
+  background: #142b46;
+  border: 1px solid #2f7093;
+  padding: 7px 10px;
+  font-size: 9px;
+  border-radius: 4px;
+}
+
+.mission-info {
+  padding: 22px;
+}
+
+.mission-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mission-title h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 15px;
+}
+
+.easy {
+  color: #65e4a9;
+  background: #123c32;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 9px;
+}
+
+.mission-info p,
+.locked-card p {
+  color: #91a2c2;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.mission-details {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+  color: #d5dff5;
+  font-size: 11px;
+}
+
+.mission-btn {
+  width: 100%;
+  padding: 12px;
+  color: #72ddff;
+  background: #142a46;
+  border: 1px solid #326b96;
+  border-radius: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.locked-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+  min-height: 300px;
+  background: linear-gradient(145deg, #141a32, #111426);
+}
+
+.lock-icon {
+  font-size: 45px;
+  margin-bottom: 20px;
+  opacity: .8;
+}
+
+.locked-card h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+/* SPACESHIP HANGAR */
+
+.ship-area {
+  margin-top: 45px;
+}
+
+.ship-panel {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  padding: 30px;
+  background: linear-gradient(110deg, #151d39, #1c1a3d);
+  border: 1px solid #34466e;
+  border-radius: 13px;
+}
+
+.ship-preview {
+  flex: 0 0 35%;
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, #333b83, transparent 70%);
+  font-size: 105px;
+  filter: drop-shadow(0 0 18px #54bfff);
+}
+
+.ship-tag {
+  font-size: 9px;
+  color: #67dcff;
+  letter-spacing: 2px;
+}
+
+.ship-details {
+  flex: 1;
+}
+
+.ship-details h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  margin: 12px 0;
+}
+
+.ship-details > p {
+  color: #9aacca;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.ship-progress {
+  margin-top: 15px;
+}
+
+.ship-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 8px;
+  color: #b9c9e4;
+}
+
+.progress-track {
+  height: 7px;
+  background: #29324c;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.health-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #32c98a, #6af0b8);
+}
+
+.attack-fill {
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #408aff, #76dfff);
+}
+
+/* FOOTER */
+
+.game-footer {
+  text-align: center;
+  color: #586783;
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 40px 10px 20px;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sidebar {
+    width: 210px;
+    min-width: 210px;
+  }
+}
+
+@media (max-width: 750px) {
+  .game-dashboard {
+    display: block;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    padding: 18px;
+  }
+
+  .brand {
+    margin-bottom: 20px;
+  }
+
+  .sidebar-menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .sidebar-menu a {
+    padding: 10px;
+  }
+
+  .menu-label,
+  .sidebar-bottom {
+    display: none;
+  }
+
+  .main-content {
+    padding: 20px 4%;
+  }
+
+  .hero {
+    padding: 40px 25px;
+  }
+
+  .hero-visual {
+    opacity: .25;
+    width: 100%;
+    right: 0;
+  }
+
+  .mission-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ship-panel {
+    flex-direction: column;
+  }
+
+  .ship-preview {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    align-items: flex-start;
+    gap: 15px;
+    flex-direction: column;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 25px;
+  }
+
+  .mission-details {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* Make all dashboard h2 headings visible */
+.game-dashboard h2 {
+    color: #70dcff;
+    text-shadow: 0 0 12px rgba(112, 220, 255, 0.4);
+}
+
+/* NEW SCI-FI GAMING COLOUR THEME */
+
+.game-dashboard {
+    background: #090B1A;
+    color: #F5F3FF;
+}
+
+/* All headings */
+.game-dashboard h1,
+.game-dashboard h2,
+.game-dashboard h3,
+.game-dashboard h4 {
+    color: #F5F3FF;
+}
+
+/* Main dashboard headings */
+.topbar h2,
+.section-heading h2,
+.ship-details h2 {
+    color: #00D9FF;
+    text-shadow: 0 0 12px rgba(0, 217, 255, 0.5);
+}
+
+/* Statistics */
+.game-stat {
+    background: linear-gradient(145deg, #171B38, #101329);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.game-stat h2 {
+    color: #A855F7;
+    text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+/* Hero section */
+.hero {
+    background: linear-gradient(120deg, #171B38, #241044, #101329);
+    border: 1px solid rgba(0, 217, 255, 0.25);
+}
+
+/* Mission cards */
+.mission-card,
+.locked-card {
+    background: #171B38;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Buttons */
+.primary-btn,
+.mission-btn {
+    background: linear-gradient(90deg, #A855F7, #00D9FF);
+    color: #090B1A;
+    border: none;
+    font-weight: bold;
+}
+
+/* Spaceship panel */
+.ship-panel {
+    background: linear-gradient(135deg, #171B38, #101329);
+    border: 1px solid rgba(0, 217, 255, 0.3);
+}
+
+/* Highlight text */
+.hero-content h1 span {
+    color: #00D9FF;
+}
+
+.hero-tag,
+.ship-tag {
+    color: #A855F7;
+}
+
+/* Gold rewards */
+.mission-count {
+    color: #FBBF24;
+}
+
+
+/* Mission Extra Details */
+
+.mission-extra-details {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(12, 18, 48, 0.8);
+    border: 1px solid rgba(130, 100, 255, 0.4);
+    border-radius: 10px;
+}
+
+.mission-extra-details h4 {
+    color: #7cddff;
+    margin-bottom: 10px;
+}
+
+.mission-extra-details p {
+    color: #c5c0df;
+    font-size: 13px;
+    margin: 7px 0;
+}
+
+
+/* Phaser Game Arena */
+
+.game-area {
+    margin-top: 35px;
+    padding: 25px;
+    background: rgba(20, 18, 55, 0.75);
+    border: 1px solid rgba(130, 100, 255, 0.35);
+    border-radius: 16px;
+}
+
+.phaser-game-container {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(0, 217, 255, 0.4);
+    border-radius: 12px;
+    background: #08091F;
+}
+
+.phaser-game-container canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+
+
+/* ===== MISSION SELECTION SCREEN ===== */
+
+.all-missions {
+  width: 100%;
+  margin-top: 35px;
+}
+
+.sector-block {
+  margin-bottom: 40px;
+  padding: 25px;
+  background: rgba(12, 18, 42, 0.75);
+  border: 1px solid rgba(80, 150, 255, 0.2);
+  border-radius: 16px;
+}
+
+.sector-block h3 {
+  color: #65c7ff;
+  font-size: 22px;
+  margin-bottom: 22px;
+  letter-spacing: 1px;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.all-missions .mission-card {
+  padding: 20px;
+  background: linear-gradient(145deg, #172445, #10172e);
+  border: 1px solid rgba(100, 170, 255, 0.25);
+  border-radius: 12px;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.all-missions .mission-card:hover {
+  transform: translateY(-5px);
+  border-color: #48baff;
+}
+
+.all-missions .mission-card h4 {
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.all-missions .mission-card p {
+  color: #b9c8df;
+  margin: 8px 0;
+}
+
+.all-missions .mission-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.all-missions .mission-btn:not(:disabled) {
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .mission-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 550px) {
+  .mission-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sector-block {
+    padding: 15px;
+  }
+}
+
+.game-stat {
+    cursor: pointer;
+    transition: transform 0.2s ease, border 0.2s ease;
+}
+
+.game-stat:hover {
+    transform: translateY(-4px);
+}
+
+.stats-detail-panel {
+    position: relative;
+    margin-top: 20px;
+    padding: 25px;
+    background: #151a35;
+    border: 1px solid #7045c5;
+    border-radius: 14px;
+    color: white;
+}
+
+.stats-detail-panel h2 {
+    color: #42d9ff;
+    margin-bottom: 18px;
+}
+
+.stats-detail-panel p {
+    margin: 12px 0;
+    color: #c5d3f5;
+}
+
+.close-stat-panel {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 20px;
+}
