@@ -16,7 +16,7 @@ function Login({ onLoginSuccess }) {
 
         try {
             const response = await fetch(
-                "http://localhost:8080/api/auth/login",
+                "https://astonishing-forgiveness-production-d96626dc.up.railway.app/api/auth/login",
                 {
                     method: "POST",
                     headers: {

@@ -18,7 +18,7 @@ function Register({ onRegisterSuccess, onBackToLogin }) {
 
         try {
             const response = await fetch(
-                "http://localhost:8080/api/players/register",
+                "https://astonishing-forgiveness-production-d96626dc.up.railway.app/api/players/register",
                 {
                     method: "POST",
                     headers: {

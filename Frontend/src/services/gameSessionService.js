@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:8080/api/game-sessions";
+const API_URL = "https://astonishing-forgiveness-production-d96626dc.up.railway.app/api/game-sessions";
 
 function getAuthHeaders() {
     const token = localStorage.getItem("token");

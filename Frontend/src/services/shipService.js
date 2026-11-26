@@ -1,5 +1,5 @@
 
-const API_URL = "http://localhost:8080/api/ships";
+const API_URL = "https://astonishing-forgiveness-production-d96626dc.up.railway.app/api/ships";
 
 const getHeaders = () => {
     const token = localStorage.getItem("token");
