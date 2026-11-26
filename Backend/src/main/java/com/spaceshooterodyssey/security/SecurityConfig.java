@@ -16,14 +16,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 public class SecurityConfig {
 
-    // CORS Configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-            List.of("http://localhost:5173")
+            List.of(
+                "http://localhost:5173",
+                "https://space-shooter-odyssey.vercel.app"
+            )
         );
 
         configuration.setAllowedMethods(
@@ -44,14 +46,12 @@ public class SecurityConfig {
         return source;
     }
 
-    // JWT Authentication Filter
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(
             JwtService jwtService) {
         return new JwtAuthenticationFilter(jwtService);
     }
 
-    // Spring Security Configuration
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -60,7 +60,6 @@ public class SecurityConfig {
 
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
             .csrf(csrf -> csrf.disable())
 
             .exceptionHandling(exception -> exception
@@ -77,7 +76,6 @@ public class SecurityConfig {
                     "/api/auth/**",
                     "/api/players/register",
                     "/api/test"
-                    
                 ).permitAll()
                 .anyRequest().authenticated()
             )
@@ -87,7 +85,6 @@ public class SecurityConfig {
             )
 
             .httpBasic(basic -> basic.disable())
-
             .formLogin(form -> form.disable())
 
             .addFilterBefore(
