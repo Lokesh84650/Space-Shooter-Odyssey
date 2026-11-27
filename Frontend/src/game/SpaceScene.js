@@ -805,65 +805,42 @@ createGameUI() {
 // MOBILE TOUCH CONTROLS
 // ==========================================
 
-// Mobile FIRE button
-this.mobileFireButton = this.add.text(
-    790,
-    520,
-    "FIRE",
-    {
-        fontSize: "20px",
-        fontStyle: "bold",
-        color: "#ffffff",
-        backgroundColor: "#d93652",
-        padding: {
-            x: 18,
-            y: 14
-        }
-    }
-)
-.setOrigin(0.5)
-.setScrollFactor(0)
-.setDepth(1000)
-.setInteractive();
-
-if (!this.sys.game.device.input.touch) {
-    this.mobileFireButton.setVisible(false);
-}
 
 
-// Hold FIRE button to shoot
-this.mobileFireButton.on("pointerdown", () => {
-    this.touchFireActive = true;
-});
-
-this.mobileFireButton.on("pointerup", () => {
-    this.touchFireActive = false;
-});
-
-this.mobileFireButton.on("pointerout", () => {
-    this.touchFireActive = false;
-});
 
 // Release firing when finger leaves the game
-this.input.on("pointerup", () => {
-    this.touchFireActive = false;
+this.input.on("pointerup", (pointer) => {
+
+    if (this.touchMovePointer === pointer.id) {
+        this.touchMovePointer = null;
+        this.touchFireActive = false;
+    }
+
 });
 
 // Stop firing when pointer leaves the game
 this.input.on("gameout", () => {
     this.touchFireActive = false;
 });
+// ==========================================
+// MOBILE TOUCH-TO-MOVE CONTROLS
+// ==========================================
 
-// Drag-to-move controls
 this.input.on("pointerdown", (pointer) => {
-    const fireBounds = this.mobileFireButton.getBounds();
 
-    if (fireBounds.contains(pointer.x, pointer.y)) {
-        return;
+    if (
+        !this.gameOver &&
+        !this.isPaused &&
+        !this.missionCompleted
+    ) {
+        this.touchMovePointer = pointer.id;
+        this.touchFireActive = true;
     }
 
-    this.touchMovePointer = pointer.id;
 });
+// ==========================================
+// MOBILE TOUCH MOVEMENT + AUTO SHOOTING
+// ==========================================
 
 this.input.on("pointermove", (pointer) => {
     if (
@@ -874,14 +851,12 @@ this.input.on("pointermove", (pointer) => {
         !this.isPaused &&
         !this.missionCompleted
     ) {
+        // Move spaceship with finger
         this.ship.x = Phaser.Math.Clamp(pointer.worldX, 35, 865);
         this.ship.y = Phaser.Math.Clamp(pointer.worldY, 300, 570);
-    }
-});
 
-this.input.on("pointerup", (pointer) => {
-    if (this.touchMovePointer === pointer.id) {
-        this.touchMovePointer = null;
+        // Automatically shoot while finger is touching and moving
+        this.touchFireActive = true;
     }
 });
     // HUD background panels
@@ -2490,6 +2465,7 @@ async completeMission() {
     } catch (error) {
         console.error("Mission progress saving failed:", error);
     }
+        window.dispatchEvent(new Event("missionProgressUpdated"));
 
     this.messageText.setVisible(false);
 
@@ -2897,8 +2873,7 @@ updatePlayerMovement(delta) {
 
             this.shieldGraphic.setVisible(shieldActive);
         }
-
-        // ==========================================
+// ==========================================
 // PLAYER SHOOTING - KEYBOARD + MOBILE
 // ==========================================
 
@@ -2909,13 +2884,15 @@ const keyboardFire = this.input.keyboard.checkDown(
     1
 );
 
+// PC: Shoot using SPACE
+// MOBILE: Shoot automatically while touching the screen
 if (keyboardFire || this.touchFireActive) {
     this.firePlayerWeapon();
 }
-        // Update bullets and missiles
-        this.updateBullets(movementFactor);
-        this.updateMissiles(delta);
 
+// Update bullets and missiles
+this.updateBullets(movementFactor);
+this.updateMissiles(delta);
         // ==========================================
         // UPDATE ENEMY MOVEMENT AND COLLISION
         // ==========================================

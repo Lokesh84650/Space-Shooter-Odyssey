@@ -4,6 +4,7 @@ import { MISSION_CONFIG, SECTORS } from "../game/missionConfig.js";
 
 import {
     getMissionProgress,
+    loadMissionProgress,
     isMissionUnlocked
 } from "../game/missionProgress.js";
 
@@ -34,6 +35,34 @@ function Dashboard({ onLogout }) {
     const [missionProgress, setMissionProgress] = useState(
         () => getMissionProgress()
     );
+    // Load mission progress from the backend
+useEffect(() => {
+
+    const refreshMissionProgress = async () => {
+        try {
+            const progress = await loadMissionProgress();
+            setMissionProgress(progress);
+        } catch (error) {
+            console.error("Mission progress loading error:", error);
+        }
+    };
+
+    refreshMissionProgress();
+    
+
+    window.addEventListener(
+        "missionProgressUpdated",
+        refreshMissionProgress
+    );
+
+    return () => {
+        window.removeEventListener(
+            "missionProgressUpdated",
+            refreshMissionProgress
+        );
+    };
+
+}, []);
 
     const [selectedMission, setSelectedMission] = useState(
         MISSION_CONFIG[0]
@@ -64,6 +93,8 @@ const [rewardError, setRewardError] = useState("");
     const [sessionId, setSessionId] = useState(null);
     const [sessionStarting, setSessionStarting] = useState(false);
     const [sessionError, setSessionError] = useState("");
+
+    
 
     // Select a mission
     const handleMissionSelect = (mission) => {
@@ -275,31 +306,46 @@ useEffect(() => {
 
     };
 
-    // Equip an owned ship
-    const handleShipSelect = async (shipId) => {
+// Equip an owned ship
+const handleShipSelect = async (shipId) => {
 
-        try {
+    const previousShips = shipList;
+    const selected = shipList.find(ship => ship.id === shipId);
 
-            setShipError("");
+    if (!selected) return;
 
-            const result = await selectShip(shipId);
+    setShipList(previousShips.map(ship => ({
+        ...ship,
+        equipped: ship.id === shipId,
+        selected: ship.id === shipId,
+        isSelected: ship.id === shipId,
+        isEquipped: ship.id === shipId
+    })));
 
-            await refreshShipData();
+    setSelectedShip(selected.shipName || selected.name);
+    setShowShipDetails(false);
+    setShipError("");
 
-            if (result.shipName) {
-                setSelectedShip(result.shipName);
-            }
+    try {
 
-            alert("Ship equipped successfully!");
+        await selectShip(shipId);
 
-        } catch (error) {
+    } catch (error) {
 
-            setShipError(error.message);
-            alert(error.message);
+        setShipList(previousShips);
 
+        const previousSelected = getSelectedShipName(previousShips);
+
+        if (previousSelected) {
+            setSelectedShip(previousSelected);
         }
 
-    };
+        setShipError(error.message);
+        alert(error.message);
+
+    }
+
+};
 
     // Upgrade an owned ship
     const handleShipUpgrade = async (shipId, upgradeType) => {
@@ -956,26 +1002,25 @@ const handleClaimDailyReward = async () => {
 
 </section>
 
+{/* Premium Spaceship Hangar */}
 
-                {/* Premium Spaceship Hangar */}
-                <ShipsHangar
-                    selectedShip={selectedShip}
-                    setSelectedShip={setSelectedShip}
-                    showShipDetails={showShipDetails}
-                    setShowShipDetails={setShowShipDetails}
-                    ships={shipList}
-                    credits={
-                        wallet?.balance ??
-                        playerProfile?.credits ??
-                        0
-                    }
-                    loading={shipLoading}
-                    error={shipError}
-                    onPurchase={handleShipPurchase}
-                    onSelect={handleShipSelect}
-                    onUpgrade={handleShipUpgrade}
-                />
-
+<ShipsHangar
+    selectedShip={selectedShip}
+    setSelectedShip={setSelectedShip}
+    showShipDetails={showShipDetails}
+    setShowShipDetails={setShowShipDetails}
+    ships={shipList}
+    credits={
+        wallet?.balance ??
+        playerProfile?.credits ??
+        0
+    }
+    loading={shipLoading}
+    error={shipError}
+    onPurchase={handleShipPurchase}
+    onSelect={handleShipSelect}
+    onUpgrade={handleShipUpgrade}
+/>
                 {/* All Missions */}
                 <div className="all-missions">
 
@@ -984,20 +1029,16 @@ const handleClaimDailyReward = async () => {
                         <div className="sector-block" key={sector.id}>
 
                             <h3>{sector.name}</h3>
+<div className="mission-grid">
 
-                            <div className="mission-grid">
+    {sector.missions.map((mission) => {
 
-                                {sector.missions.map((mission) => {
+        const completed =
+            missionProgress.completedMissions.includes(mission.id);
 
-                                    const unlocked = isMissionUnlocked(
-                                        mission.id,
-                                        missionProgress
-                                    );
-
-                                    const completed =
-                                        missionProgress.completedMissions.includes(
-                                            mission.id
-                                        );
+        const unlocked =
+            completed ||
+            isMissionUnlocked(mission.id, missionProgress);
 
                                     return (
 
@@ -1023,11 +1064,10 @@ const handleClaimDailyReward = async () => {
 
                                             <button
                                                 className="mission-btn"
-                                                disabled={
-                                                    !unlocked ||
-                                                    sessionStarting ||
-                                                    gameStarted
-                                                }
+                                              disabled={
+    !unlocked ||
+    sessionStarting
+}
                                                 onClick={() => {
 
                                                     if (completed) {

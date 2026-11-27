@@ -34,23 +34,39 @@ export async function startGameSession(missionId, selectedShipId) {
 
 // Save mission completion results
 export async function completeGameSession(sessionId, results) {
-    const response = await fetch(
-        `${API_URL}/${sessionId}/complete`,
-        {
-            method: "POST",
-            headers: getAuthHeaders(),
-            body: JSON.stringify({
-                score: results.score,
-                enemiesDefeated: results.enemiesDefeated,
-                bossesDefeated: results.bossesDefeated,
-                damageTaken: results.damageTaken,
-                result: results.result
-            })
-        }
-    );
+    const response = await fetch(`${API_URL}/${sessionId}/complete`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+            score: results.score,
+            enemiesDefeated: results.enemiesDefeated,
+            bossesDefeated: results.bossesDefeated,
+            damageTaken: results.damageTaken,
+            result: results.result
+        })
+    });
 
     if (!response.ok) {
         throw new Error("Unable to save mission results.");
+    }
+
+    const savedSession = await response.json();
+
+    // Notify the dashboard to refresh mission progress
+    window.dispatchEvent(new Event("missionProgressUpdated"));
+
+    return savedSession;
+}
+
+// Get saved game sessions for the logged-in player
+export async function getGameHistory() {
+    const response = await fetch(`${API_URL}/history`, {
+        method: "GET",
+        headers: getAuthHeaders()
+    });
+
+    if (!response.ok) {
+        throw new Error("Unable to load mission history.");
     }
 
     return await response.json();

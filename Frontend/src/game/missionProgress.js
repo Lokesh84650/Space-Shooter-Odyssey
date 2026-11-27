@@ -1,5 +1,6 @@
 
 import { MISSION_CONFIG } from "./missionConfig.js";
+import { getGameHistory } from "../services/gameSessionService.js";
 
 const STORAGE_KEY = "space-shooter-mission-progress";
 
@@ -9,13 +10,63 @@ const createInitialProgress = () => ({
     missionResults: {}
 });
 
+// Build mission progress from backend game sessions
+export const loadMissionProgress = async () => {
+    const sessions = await getGameHistory();
+
+    const completedSessions = sessions.filter(session =>
+        session.result === "COMPLETED" ||
+        session.status === "COMPLETED"
+    );
+
+    const completedMissions = [
+        ...new Set(completedSessions.map(session => session.missionId))
+    ];
+
+    const unlockedMissions = [MISSION_CONFIG[0].id];
+
+    completedMissions.forEach(missionId => {
+        const mission = MISSION_CONFIG.find(item => item.id === missionId);
+
+        if (!mission) return;
+
+        const nextMission = MISSION_CONFIG.find(
+            item => item.sequence === mission.sequence + 1
+        );
+
+        if (nextMission && !unlockedMissions.includes(nextMission.id)) {
+            unlockedMissions.push(nextMission.id);
+        }
+    });
+
+    const missionResults = {};
+
+    completedSessions.forEach(session => {
+        const missionId = session.missionId;
+
+        if (!missionResults[missionId]) {
+            missionResults[missionId] = {
+                score: session.score || 0,
+                stars: session.starsAwarded || 0,
+                completedAt: session.endTime || null
+            };
+        }
+    });
+
+    const progress = {
+        completedMissions,
+        unlockedMissions,
+        missionResults
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+
+    return progress;
+};
+
 export const getMissionProgress = () => {
     try {
-        if (typeof localStorage === "undefined") {
-    return createInitialProgress();
-}
-
-const savedProgress = localStorage.getItem(STORAGE_KEY);
+        const savedProgress = localStorage.getItem(STORAGE_KEY);
 
         if (!savedProgress) {
             return createInitialProgress();
@@ -41,6 +92,7 @@ const savedProgress = localStorage.getItem(STORAGE_KEY);
 export const isMissionUnlocked = (missionId, progress = getMissionProgress()) => {
     return progress.unlockedMissions.includes(missionId);
 };
+
 
 export const completeMission = (missionId, result = {}) => {
     const mission = MISSION_CONFIG.find(item => item.id === missionId);
@@ -69,15 +121,12 @@ export const completeMission = (missionId, result = {}) => {
         item => item.sequence === mission.sequence + 1
     );
 
-    if (nextMission) {
-        if (!progress.unlockedMissions.includes(nextMission.id)) {
-            progress.unlockedMissions.push(nextMission.id);
-        }
+    if (nextMission &&
+        !progress.unlockedMissions.includes(nextMission.id)) {
+        progress.unlockedMissions.push(nextMission.id);
     }
 
-   if (typeof localStorage !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-}
 
     return progress;
 };
