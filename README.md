@@ -107,9 +107,6 @@ On Windows PowerShell, use:
 
 Configure your MySQL database and required environment variables before starting the backend.
 
-## 👨‍💻 Developer
-
-**Lokesh Pallapu**
 
 ## 👨‍💻 Developer
 
