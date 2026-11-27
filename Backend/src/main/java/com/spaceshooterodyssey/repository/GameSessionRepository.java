@@ -1,4 +1,3 @@
-
 package com.spaceshooterodyssey.repository;
 
 import java.util.List;
@@ -22,7 +21,6 @@ public interface GameSessionRepository
             Long playerProfileId
     );
 
-    // Retrieve completed sessions for a specific player.
     List<GameSession> findAllByPlayerProfile_IdAndStatusOrderByStartTimeDesc(
             Long playerProfileId,
             String status

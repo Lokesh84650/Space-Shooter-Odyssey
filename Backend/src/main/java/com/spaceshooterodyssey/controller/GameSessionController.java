@@ -9,6 +9,13 @@ import com.spaceshooterodyssey.model.PlayerProfile;
 import com.spaceshooterodyssey.service.GameSessionService;
 import com.spaceshooterodyssey.service.PlayerProfileService;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 @RestController
 @RequestMapping("/api/game-sessions")
 public class GameSessionController {
@@ -24,10 +31,11 @@ public class GameSessionController {
         this.playerProfileService = playerProfileService;
     }
 
+    // Start a new game session
     @PostMapping("/start")
     public GameSession startSession(
             @AuthenticationPrincipal String email,
-            @RequestBody StartGameSessionRequest request) {
+            @Valid @RequestBody StartGameSessionRequest request) {
 
         PlayerProfile player =
                 playerProfileService.getPlayerProfile(email);
@@ -39,11 +47,12 @@ public class GameSessionController {
         );
     }
 
+    // Complete an existing game session
     @PostMapping("/{sessionId}/complete")
     public GameSession completeSession(
             @AuthenticationPrincipal String email,
             @PathVariable String sessionId,
-            @RequestBody CompleteGameSessionRequest request) {
+            @Valid @RequestBody CompleteGameSessionRequest request) {
 
         PlayerProfile player =
                 playerProfileService.getPlayerProfile(email);
@@ -59,20 +68,26 @@ public class GameSessionController {
         );
     }
 
-@GetMapping("/history")
-public java.util.List<GameSession> getGameHistory(
-        @AuthenticationPrincipal String email) {
+    // Get authenticated player's game history
+    @GetMapping("/history")
+    public java.util.List<GameSession> getGameHistory(
+            @AuthenticationPrincipal String email) {
 
-    PlayerProfile player =
-            playerProfileService.getPlayerProfile(email);
+        PlayerProfile player =
+                playerProfileService.getPlayerProfile(email);
 
-    return gameSessionService.getGameHistory(player);
-}
+        return gameSessionService.getGameHistory(player);
+    }
 
-
+    // Request DTO for starting a game
     public static class StartGameSessionRequest {
 
+        @NotBlank(message = "Mission ID is required")
+        @Size(max = 100, message = "Mission ID is too long")
         private String missionId;
+
+        @NotBlank(message = "Selected ship ID is required")
+        @Size(max = 100, message = "Selected ship ID is too long")
         private String selectedShipId;
 
         public String getMissionId() {
@@ -92,12 +107,30 @@ public java.util.List<GameSession> getGameHistory(
         }
     }
 
+    // Request DTO for completing a game
     public static class CompleteGameSessionRequest {
 
+        @Min(value = 0, message = "Score cannot be negative")
+        @Max(value = 10000000, message = "Score exceeds the allowed limit")
         private int score;
+
+        @Min(value = 0, message = "Enemies defeated cannot be negative")
+        @Max(value = 10000, message = "Enemy count exceeds the allowed limit")
         private int enemiesDefeated;
+
+        @Min(value = 0, message = "Bosses defeated cannot be negative")
+        @Max(value = 100, message = "Boss count exceeds the allowed limit")
         private int bossesDefeated;
+
+        @Min(value = 0, message = "Damage taken cannot be negative")
+        @Max(value = 1000000, message = "Damage exceeds the allowed limit")
         private int damageTaken;
+
+        @NotBlank(message = "Game result is required")
+        @Pattern(
+                regexp = "COMPLETED|FAILED",
+                message = "Result must be COMPLETED or FAILED"
+        )
         private String result;
 
         public int getScore() {

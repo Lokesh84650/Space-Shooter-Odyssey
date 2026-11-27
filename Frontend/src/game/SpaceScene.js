@@ -242,9 +242,9 @@ this.sessionId = data?.sessionId || null;
         this.sectorNumber = sectorNumber;
     }
 
-    create() {
+   create() {
 
-        this.cameras.main.setBackgroundColor("#08091F");
+    this.cameras.main.setBackgroundColor("#08091F");
 
         // Background stars
         this.stars = [];
@@ -269,14 +269,14 @@ this.sessionId = data?.sessionId || null;
 
         // Accept either a ship name or a ship object from React
         const shipName = typeof selectedShipData === "string"
-            ? selectedShipData
-            : selectedShipData?.name ||
-              selectedShipData?.shipName ||
-              selectedShipData?.shipClass ||
-              selectedShipData?.className ||
-              "Interceptor";
+    ? selectedShipData
+    : selectedShipData?.name ||
+      selectedShipData?.shipName ||
+      selectedShipData?.shipClass ||
+      selectedShipData?.className ||
+      "Interceptor";
 
-        this.selectedShip = shipName;
+this.selectedShip = shipName;
 
         this.ship = this.add.container(450, 500);
 
@@ -686,6 +686,13 @@ this.movementKeys = this.input.keyboard.addKeys({
     arrowRight: Phaser.Input.Keyboard.KeyCodes.RIGHT
 });
 
+// Mobile touch controls
+this.touchMovePointer = null;
+this.touchFireActive = false;
+this.touchStartPosition = null;
+this.touchMoveSpeed = this.shipMovementSpeed || 5;
+
+
         this.spaceKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.SPACE
         );
@@ -737,6 +744,8 @@ this.health = this.maxHealth;
 
         this.gameOver = false;
         this.missionCompleted = false;
+
+        this.isPaused = false;
 
         this.lastPlayerShot = 0;
         this.fireInterval = 120;
@@ -790,131 +799,297 @@ this.shieldGraphic.setVisible(false);
         // ==========================================
     // 7. GAME UI
     // ==========================================
+        
+createGameUI() {
+// ==========================================
+// MOBILE TOUCH CONTROLS
+// ==========================================
 
-    createGameUI() {
-
-        this.scoreText = this.add.text(20, 20, "SCORE: 0", {
-            fontSize: "24px",
-            color: "#00ffff",
-            fontStyle: "bold"
-        }).setDepth(20);
-
-       this.healthText = this.add.text(20, 55, "HEALTH: " + this.health + " / " + this.maxHealth, {
-            fontSize: "20px",
-            color: "#00ff66",
-            fontStyle: "bold"
-        }).setDepth(20);
-
-        this.missionText = this.add.text(
-    760,
-    20,
-    `MISSION: ${this.missionNumber}`,
+// Mobile FIRE button
+this.mobileFireButton = this.add.text(
+    790,
+    520,
+    "FIRE",
     {
-            fontSize: "20px",
-            color: "#ffffff",
-            fontStyle: "bold"
-        }).setOrigin(0.5).setDepth(20);
+        fontSize: "20px",
+        fontStyle: "bold",
+        color: "#ffffff",
+        backgroundColor: "#d93652",
+        padding: {
+            x: 18,
+            y: 14
+        }
+    }
+)
+.setOrigin(0.5)
+.setScrollFactor(0)
+.setDepth(1000)
+.setInteractive();
 
-        this.waveText = this.add.text(760, 50, "WAVE: 1 / 5", {
-            fontSize: "20px",
-            color: "#ffff00",
-            fontStyle: "bold"
-        }).setOrigin(0.5).setDepth(20);
+if (!this.sys.game.device.input.touch) {
+    this.mobileFireButton.setVisible(false);
+}
 
-        this.messageText = this.add.text(450, 250, "", {
-            fontSize: "38px",
-            color: "#00ffff",
-            fontStyle: "bold",
-            backgroundColor: "#08091F",
-            padding: { x: 20, y: 12 },
-            align: "center"
-        }).setOrigin(0.5).setDepth(80);
 
-        this.bossNameText = this.add.text(450, 90, "", {
-            fontSize: "25px",
-            color: "#ff5555",
-            fontStyle: "bold"
-        }).setOrigin(0.5).setDepth(30).setVisible(false);
-
-        this.bossHealthGraphics = this.add.graphics()
-            .setDepth(30)
-            .setVisible(false);
-
-        // Power-up inventory display
-        this.powerupText = this.add.text(20, 95, "", {
-            fontSize: "14px",
-            color: "#ffffff",
-            lineSpacing: 5,
-            backgroundColor: "#15152e",
-            padding: { x: 8, y: 6 }
-        }).setDepth(30);
-
-        this.pickupMessage = this.add.text(450, 550, "", {
-            fontSize: "18px",
-            color: "#00ff99",
-            fontStyle: "bold",
-            backgroundColor: "#08091F",
-            padding: { x: 8, y: 5 }
-        }).setOrigin(0.5).setDepth(40);
-
-        this.gameOverText = this.add.text(450, 280, "GAME OVER", {
-            fontSize: "55px",
-            color: "#ff1744",
-            fontStyle: "bold",
-            backgroundColor: "#08091F",
-            padding: { x: 20, y: 15 }
-        }).setOrigin(0.5).setDepth(100).setVisible(false);
-
-        this.gameOverScore = this.add.text(450, 345, "", {
-            fontSize: "23px",
-            color: "#ffffff"
-        }).setOrigin(0.5).setDepth(100).setVisible(false);
-
-        this.restartText = this.add.text(450, 420, "RESTART GAME", {
-            fontSize: "26px",
-            color: "#ffffff",
-            backgroundColor: "#6c35ff",
-            padding: { x: 25, y: 15 },
-            fontStyle: "bold"
-        }).setOrigin(0.5).setDepth(101).setVisible(false);
-
-        this.restartText.setInteractive({ useHandCursor: true });
-
-        this.restartText.on("pointerdown", () => {
-            this.scene.restart();
-        });
-
-        this.completedText = this.add.text(450, 250, "", {
-            fontSize: "42px",
-            color: "#00ff99",
-            fontStyle: "bold",
-            backgroundColor: "#08091F",
-            padding: { x: 20, y: 15 }
-        }).setOrigin(0.5).setDepth(100).setVisible(false);
-
-        this.completedScoreText = this.add.text(450, 320, "", {
-            fontSize: "24px",
-            color: "#ffffff"
-        }).setOrigin(0.5).setDepth(100).setVisible(false);
-
-        this.nextMissionText = this.add.text(450, 400, "", {
-            fontSize: "26px",
-            color: "#ffffff",
-            backgroundColor: "#6c35ff",
-            padding: { x: 25, y: 15 },
-            fontStyle: "bold"
-        }).setOrigin(0.5).setDepth(101).setVisible(false);
-
-       this.nextMissionText.setInteractive({ useHandCursor: true });
-
-this.nextMissionText.on("pointerdown", () => {
-    if (!this.missionCompleted) return;
-
-    this.startNewMission();
+// Hold FIRE button to shoot
+this.mobileFireButton.on("pointerdown", () => {
+    this.touchFireActive = true;
 });
 
-        this.updatePowerupUI();
+this.mobileFireButton.on("pointerup", () => {
+    this.touchFireActive = false;
+});
+
+this.mobileFireButton.on("pointerout", () => {
+    this.touchFireActive = false;
+});
+
+// Release firing when finger leaves the game
+this.input.on("pointerup", () => {
+    this.touchFireActive = false;
+});
+
+// Stop firing when pointer leaves the game
+this.input.on("gameout", () => {
+    this.touchFireActive = false;
+});
+
+// Drag-to-move controls
+this.input.on("pointerdown", (pointer) => {
+    const fireBounds = this.mobileFireButton.getBounds();
+
+    if (fireBounds.contains(pointer.x, pointer.y)) {
+        return;
     }
+
+    this.touchMovePointer = pointer.id;
+});
+
+this.input.on("pointermove", (pointer) => {
+    if (
+        this.touchMovePointer === pointer.id &&
+        pointer.isDown &&
+        this.ship &&
+        !this.gameOver &&
+        !this.isPaused &&
+        !this.missionCompleted
+    ) {
+        this.ship.x = Phaser.Math.Clamp(pointer.worldX, 35, 865);
+        this.ship.y = Phaser.Math.Clamp(pointer.worldY, 300, 570);
+    }
+});
+
+this.input.on("pointerup", (pointer) => {
+    if (this.touchMovePointer === pointer.id) {
+        this.touchMovePointer = null;
+    }
+});
+    // HUD background panels
+    this.hudGraphics = this.add.graphics().setDepth(19);
+
+    this.hudGraphics.fillStyle(0x08091f, 0.88);
+    this.hudGraphics.fillRoundedRect(12, 12, 260, 88, 12);
+    this.hudGraphics.lineStyle(1, 0x00d9ff, 0.55);
+    this.hudGraphics.strokeRoundedRect(12, 12, 260, 88, 12);
+
+    this.hudGraphics.fillStyle(0x08091f, 0.88);
+    this.hudGraphics.fillRoundedRect(650, 12, 235, 75, 12);
+    this.hudGraphics.lineStyle(1, 0x8b5cf6, 0.65);
+    this.hudGraphics.strokeRoundedRect(650, 12, 235, 75, 12);
+
+    // Score
+    this.scoreText = this.add.text(28, 24, "SCORE: 0", {
+        fontSize: "22px",
+        color: "#00eaff",
+        fontStyle: "bold"
+    }).setDepth(20);
+
+    // Health label
+    this.healthText = this.add.text(
+        28, 57,
+        "HEALTH: " + this.health + " / " + this.maxHealth,
+        {
+            fontSize: "16px",
+            color: "#8cffbd",
+            fontStyle: "bold"
+        }
+    ).setDepth(20);
+
+    // Graphical health bar
+    this.healthBarBackground = this.add.graphics().setDepth(20);
+    this.healthBarFill = this.add.graphics().setDepth(21);
+    this.updateHealthUI();
+
+    // Mission and wave information
+    this.missionText = this.add.text(
+        767, 27,
+        "MISSION: " + this.missionNumber,
+        {
+            fontSize: "17px",
+            color: "#ffffff",
+            fontStyle: "bold",
+            align: "center"
+        }
+    ).setOrigin(0.5).setDepth(20);
+
+    this.waveText = this.add.text(767, 54, "WAVE: 1 / 5", {
+        fontSize: "17px",
+        color: "#ffe66d",
+        fontStyle: "bold",
+        align: "center"
+    }).setOrigin(0.5).setDepth(20);
+
+    // Centre notifications
+    this.messageText = this.add.text(450, 250, "", {
+        fontSize: "34px",
+        color: "#00ffff",
+        fontStyle: "bold",
+        backgroundColor: "#08091F",
+        padding: { x: 20, y: 12 },
+        align: "center"
+    }).setOrigin(0.5).setDepth(80);
+
+    // Boss information
+    this.bossNameText = this.add.text(450, 90, "", {
+        fontSize: "23px",
+        color: "#ff5555",
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(30).setVisible(false);
+
+    this.bossHealthGraphics = this.add.graphics()
+        .setDepth(30)
+        .setVisible(false);
+
+    // Power-up inventory (existing system retained)
+    this.powerupText = this.add.text(20, 115, "", {
+        fontSize: "14px",
+        color: "#ffffff",
+        lineSpacing: 5,
+        backgroundColor: "#15152e",
+        padding: { x: 8, y: 6 }
+    }).setDepth(30);
+
+    this.pickupMessage = this.add.text(450, 550, "", {
+        fontSize: "18px",
+        color: "#00ff99",
+        fontStyle: "bold",
+        backgroundColor: "#08091F",
+        padding: { x: 8, y: 5 }
+    }).setOrigin(0.5).setDepth(40);
+
+    // Game-over screen
+    this.gameOverText = this.add.text(450, 280, "GAME OVER", {
+        fontSize: "55px",
+        color: "#ff1744",
+        fontStyle: "bold",
+        backgroundColor: "#08091F",
+        padding: { x: 20, y: 15 }
+    }).setOrigin(0.5).setDepth(100).setVisible(false);
+
+    this.gameOverScore = this.add.text(450, 345, "", {
+        fontSize: "23px",
+        color: "#ffffff"
+    }).setOrigin(0.5).setDepth(100).setVisible(false);
+
+    this.restartText = this.add.text(450, 420, "RESTART GAME", {
+        fontSize: "26px",
+        color: "#ffffff",
+        backgroundColor: "#6c35ff",
+        padding: { x: 25, y: 15 },
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(101).setVisible(false);
+
+    this.restartText.setInteractive({ useHandCursor: true });
+
+    this.restartText.on("pointerdown", () => {
+        this.restartCurrentMission();
+    });
+
+    // Mission-completion screen
+    this.completedText = this.add.text(450, 250, "", {
+        fontSize: "42px",
+        color: "#00ff99",
+        fontStyle: "bold",
+        backgroundColor: "#08091F",
+        padding: { x: 20, y: 15 }
+    }).setOrigin(0.5).setDepth(100).setVisible(false);
+
+    this.completedScoreText = this.add.text(450, 320, "", {
+        fontSize: "24px",
+        color: "#ffffff"
+    }).setOrigin(0.5).setDepth(100).setVisible(false);
+
+    this.nextMissionText = this.add.text(310, 440, "NEXT MISSION", {
+        fontSize: "23px",
+        color: "#ffffff",
+        backgroundColor: "#6c35ff",
+        padding: { x: 20, y: 15 },
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(101).setVisible(false);
+
+    this.nextMissionText.setInteractive({ useHandCursor: true });
+
+    this.playAgainText = this.add.text(610, 440, "PLAY AGAIN", {
+        fontSize: "23px",
+        color: "#ffffff",
+        backgroundColor: "#087f5b",
+        padding: { x: 20, y: 15 },
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(101)
+        .setVisible(false)
+        .setInteractive({ useHandCursor: true });
+
+    this.playAgainText.on("pointerdown", () => {
+        if (!this.missionCompleted) return;
+        this.restartCurrentMission();
+    });
+
+    this.nextMissionText.on("pointerdown", () => {
+        if (!this.missionCompleted) return;
+        this.startNewMission();
+    });
+
+    // Pause controls
+    this.pauseText = this.add.text(865, 105, "II", {
+        fontSize: "22px",
+        color: "#ffffff",
+        backgroundColor: "#6c35ff",
+        padding: { x: 12, y: 8 },
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(120).setInteractive({
+        useHandCursor: true
+    });
+
+    this.pauseOverlay = this.add.rectangle(
+        450, 300, 900, 600, 0x000000, 0.8
+    ).setDepth(120).setVisible(false);
+
+    this.pausedTitle = this.add.text(450, 240, "GAME PAUSED", {
+        fontSize: "42px",
+        color: "#00ffff",
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(121).setVisible(false);
+
+    this.resumeText = this.add.text(450, 330, "RESUME GAME", {
+        fontSize: "25px",
+        color: "#ffffff",
+        backgroundColor: "#087f5b",
+        padding: { x: 25, y: 15 },
+        fontStyle: "bold"
+    }).setOrigin(0.5).setDepth(121).setVisible(false)
+        .setInteractive({ useHandCursor: true });
+
+    this.pauseText.on("pointerdown", () => {
+        this.togglePause();
+    });
+
+    this.resumeText.on("pointerdown", () => {
+        this.togglePause();
+    });
+
+    this.updatePowerupUI();
+}
+
 
     // ==========================================
     // 8. POWER-UP INVENTORY UI
@@ -929,11 +1104,56 @@ updatePowerupUI() {
 // 10. START NORMAL WAVE
 // ==========================================
 
+
+async restartCurrentMission() {
+
+    const sectorNumber = Math.ceil(this.missionNumber / 10);
+
+    const missionWithinSector =
+        ((this.missionNumber - 1) % 10) + 1;
+
+    const missionId =
+        this.selectedMission?.id ||
+        `sector-${sectorNumber}-mission-${String(missionWithinSector).padStart(2, "0")}`;
+
+    this.messageText.setText("RESTARTING MISSION...");
+    this.messageText.setVisible(true);
+
+    try {
+        const response = await startGameSession(
+            missionId,
+            this.selectedShip
+        );
+
+        if (!response.sessionId) {
+            throw new Error("New session ID was not returned.");
+        }
+
+        this.scene.restart({
+            selectedShip: this.selectedShip,
+            selectedMission: {
+                ...(this.selectedMission || {}),
+                id: missionId
+            },
+            sessionId: response.sessionId
+        });
+
+    } catch (error) {
+        console.error("Mission restart failed:", error);
+        this.messageText.setText("RESTART FAILED - CHECK CONNECTION");
+        this.messageText.setVisible(true);
+    }
+}
+
+
+
+
 async startNewMission() {
 
     if (!this.missionCompleted) return;
 
     this.nextMissionText.setVisible(false);
+    this.playAgainText.setVisible(false);
     this.nextMissionText.disableInteractive();
 
     this.messageText.setText("PREPARING NEXT MISSION...");
@@ -1003,6 +1223,8 @@ startWave(waveNumber) {
     );
 
     this.waveQueue = [...WAVE_PLANS[waveNumber - 1]];
+    this.waveKills = 0;
+this.waveRequiredKills = this.waveQueue.length;
 
     this.nextSpawnTime = this.time.now + 1000;
 
@@ -1037,9 +1259,9 @@ startWave(waveNumber) {
 
         // Cycle through four directions:
         // 0 = Top, 1 = Right, 2 = Bottom, 3 = Left
-        const side = this.spawnSide % 4;
+        const side = this.spawnSide % 3;
 
-        this.spawnSide = (this.spawnSide + 1) % 4;
+       this.spawnSide = (this.spawnSide + 1) % 3;
 
         let x;
         let y;
@@ -1066,16 +1288,7 @@ startWave(waveNumber) {
 
         }
 
-        // ======================================
-        // BOTTOM SIDE
-        // ======================================
-
-        else if (side === 2) {
-
-            x = Phaser.Math.Between(80, 820);
-            y = 660;
-
-        }
+        
 
         // ======================================
         // LEFT SIDE
@@ -1103,6 +1316,7 @@ startWave(waveNumber) {
 
         if (enemy) {
 
+            enemy.enemyType = type;
             // Calculate the direction towards the target
             const angle = Phaser.Math.Angle.Between(
                 x,
@@ -1379,11 +1593,50 @@ enemy.movementRange = settings.range;
     // ==========================================
     // 16. HEALTH UI
     // ==========================================
+
 updateHealthUI() {
+    if (!this.healthText || !this.healthBarBackground || !this.healthBarFill) {
+        return;
+    }
+
+    const percentage = Phaser.Math.Clamp(
+        this.health / this.maxHealth,
+        0,
+        1
+    );
+
     this.healthText.setText(
         "HEALTH: " + this.health + " / " + this.maxHealth
     );
+
+    // Health bar background
+    this.healthBarBackground.clear();
+    this.healthBarBackground.fillStyle(0x252b45, 1);
+    this.healthBarBackground.fillRoundedRect(28, 82, 220, 9, 4);
+
+    // Health bar fill
+    this.healthBarFill.clear();
+
+    let healthColor = 0x00ff88;
+
+    if (percentage <= 0.25) {
+        healthColor = 0xff304f;
+    } else if (percentage <= 0.5) {
+        healthColor = 0xffc857;
+    }
+
+    if (percentage > 0) {
+        this.healthBarFill.fillStyle(healthColor, 1);
+        this.healthBarFill.fillRoundedRect(
+            28,
+            82,
+            220 * percentage,
+            9,
+            4
+        );
+    }
 }
+
 
     // ==========================================
     // 17. CREATE PLAYER BULLET
@@ -1513,10 +1766,23 @@ updateHealthUI() {
 // ==========================================
 // 20. ENEMY DESTRUCTION AND REWARDS
 // ==========================================
-
-destroyEnemy(enemy) {
+destroyEnemy(enemy, killedByBullet = false) {
 
     if (!enemy || !enemy.active) return;
+
+    // Count only player bullet kills toward wave completion
+    if (killedByBullet) {
+        this.waveKills++;
+    } else if (
+        this.waveActive &&
+        this.waveNumber >= 1 &&
+        this.waveNumber <= 4 &&
+        this.waveKills < this.waveRequiredKills &&
+        enemy.enemyType
+    ) {
+        // Require this enemy type to be destroyed by a bullet
+        this.waveQueue.push(enemy.enemyType);
+    }
 
     this.enemiesDefeated++;
     this.score += enemy.scoreValue;
@@ -1646,6 +1912,7 @@ destroyEnemy(enemy) {
         }
 
         pickup.destroy();
+        
     }
 
     // ==========================================
@@ -1743,13 +2010,12 @@ this.playerInvulnerableUntil = now + 1000;
         this.updateHealthUI();
     }
 
-    async submitSessionResult(result) {
-
-    if (!this.sessionId || this.resultSubmitted) {
-        return;
+async submitSessionResult(result) {
+    if (!this.sessionId || this.resultSubmitted || this.submittingResult) {
+        return null;
     }
 
-    this.resultSubmitted = true;
+    this.submittingResult = true;
 
     try {
         const savedResult = await completeGameSession(
@@ -1759,14 +2025,27 @@ this.playerInvulnerableUntil = now + 1000;
                 enemiesDefeated: this.enemiesDefeated,
                 bossesDefeated: this.bossesDefeated,
                 damageTaken: this.damageTaken,
-                result: result
+                result
             }
         );
 
+        this.resultSubmitted = true;
+
         console.log("Mission result saved:", savedResult);
+
+        // Refresh dashboard wallet after backend confirms the reward.
+        window.dispatchEvent(new Event("walletUpdated"));
+
+        return savedResult;
 
     } catch (error) {
         console.error("Unable to save mission result:", error);
+        this.messageText.setText("REWARD SAVE FAILED - PLEASE TRY AGAIN");
+        this.messageText.setVisible(true);
+        return null;
+
+    } finally {
+        this.submittingResult = false;
     }
 }
 
@@ -2177,13 +2456,23 @@ this.bossBombs = [];
     // 31. COMPLETE MISSION
     // ==========================================
 
-    
-completeMission() {
+ 
+async completeMission() {
 
     if (this.missionCompleted || this.gameOver) return;
 
     this.missionCompleted = true;
-    this.submitSessionResult("COMPLETED");
+
+    this.messageText.setText("MISSION COMPLETED - SAVING REWARDS...");
+    this.messageText.setVisible(true);
+
+    const savedResult = await this.submitSessionResult("COMPLETED");
+
+    if (!savedResult) {
+        this.missionCompleted = false;
+        this.messageText.setText("REWARD SAVE FAILED - TRY AGAIN");
+        return;
+    }
 
     const sectorNumber = Math.ceil(this.missionNumber / 10);
 
@@ -2194,7 +2483,7 @@ completeMission() {
         `sector-${sectorNumber}-mission-${String(missionWithinSector).padStart(2, "0")}`;
 
     try {
-        saveCompletedMission(missionId, {
+        await saveCompletedMission(missionId, {
             score: this.score,
             stars: 1
         });
@@ -2218,8 +2507,39 @@ completeMission() {
     );
 
     this.completedScoreText.setVisible(true);
-
+    this.nextMissionText.setText("NEXT MISSION");
     this.nextMissionText.setVisible(true);
+    this.playAgainText.setVisible(true);
+}
+
+
+togglePause() {
+
+    if (this.gameOver || this.missionCompleted) return;
+
+    this.isPaused = !this.isPaused;
+
+    this.pauseOverlay.setVisible(this.isPaused);
+    this.pausedTitle.setVisible(this.isPaused);
+    this.resumeText.setVisible(this.isPaused);
+
+    this.pauseText.setVisible(!this.isPaused);
+
+    if (this.isPaused) {
+        this.time.paused = true;
+        this.tweens.pauseAll();
+
+        if (this.physics && this.physics.world) {
+            this.physics.world.pause();
+        }
+    } else {
+        this.time.paused = false;
+        this.tweens.resumeAll();
+
+        if (this.physics && this.physics.world) {
+            this.physics.world.resume();
+        }
+    }
 }
 
 
@@ -2369,9 +2689,9 @@ updatePlayerMovement(delta) {
 
                     bullet.destroy();
 
-                    if (enemy.health <= 0) {
-                        this.destroyEnemy(enemy);
-                    }
+                   if (enemy.health <= 0) {
+    this.destroyEnemy(enemy, true);
+}
 
                     break;
                 }
@@ -2527,7 +2847,7 @@ updatePlayerMovement(delta) {
 
     update(time, delta) {
 
-        if (this.gameOver || this.missionCompleted) return;
+        if (this.gameOver || this.missionCompleted || this.isPaused) return;
 
         const movementFactor = delta / 16.67;
 
@@ -2578,16 +2898,20 @@ updatePlayerMovement(delta) {
             this.shieldGraphic.setVisible(shieldActive);
         }
 
-        // Player shooting
-        if (this.input.keyboard.checkDown(
-            this.input.keyboard.addKey(
-                Phaser.Input.Keyboard.KeyCodes.SPACE
-            ),
-            1
-        )) {
-            this.firePlayerWeapon();
-        }
+        // ==========================================
+// PLAYER SHOOTING - KEYBOARD + MOBILE
+// ==========================================
 
+const keyboardFire = this.input.keyboard.checkDown(
+    this.input.keyboard.addKey(
+        Phaser.Input.Keyboard.KeyCodes.SPACE
+    ),
+    1
+);
+
+if (keyboardFire || this.touchFireActive) {
+    this.firePlayerWeapon();
+}
         // Update bullets and missiles
         this.updateBullets(movementFactor);
         this.updateMissiles(delta);
@@ -2657,9 +2981,20 @@ else if (enemy.y >= 605 && enemy.velocityY > 0) {
             );
 
             if (distance < 35 * (enemy.scaleX || 1)) {
-                this.damagePlayer(enemy.damage);
-                enemy.destroy();
-            }
+    this.damagePlayer(enemy.damage);
+
+    if (
+        this.waveActive &&
+        this.waveNumber >= 1 &&
+        this.waveNumber <= 4 &&
+        this.waveKills < this.waveRequiredKills &&
+        enemy.enemyType
+    ) {
+        this.waveQueue.push(enemy.enemyType);
+    }
+
+    enemy.destroy();
+}
         });
 
 // Remove only enemies actually destroyed by player attacks
@@ -2688,9 +3023,10 @@ this.updateBossBombs(delta);
             // 1. All enemies have been spawned
             // 2. All active enemies have been destroyed
             if (
-                this.waveQueue.length === 0 &&
-                this.enemies.length === 0
-            ) {
+    this.waveQueue.length === 0 &&
+    this.enemies.length === 0 &&
+    this.waveKills >= this.waveRequiredKills
+) {
 
                 // Start the wave-completion countdown
                 if (this.waveCompleteAt === null) {

@@ -21,17 +21,24 @@ function PhaserGame({
             height: 600,
             parent: gameRef.current,
             backgroundColor: "#08091F",
+
+            // Responsive scaling for desktop, tablet and mobile
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH
+            },
+
             scene: [SpaceScene]
         };
 
         const game = new Phaser.Game(config);
 
         game.events.once(Phaser.Core.Events.READY, () => {
-                game.scene.start("SpaceScene", {
-                    selectedShip,
-                    selectedMission,
-                    sessionId
-                });
+            game.scene.start("SpaceScene", {
+                selectedShip,
+                selectedMission,
+                sessionId
+            });
         });
 
         return () => {

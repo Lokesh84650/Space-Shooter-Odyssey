@@ -20,15 +20,18 @@ public class SpaceshipService {
     private final PlayerProfileRepository playerProfileRepository;
     private final PlayerShipRepository playerShipRepository;
     private final SpaceshipRepository spaceshipRepository;
+    private final WalletService walletService;
 
     public SpaceshipService(
-            PlayerProfileRepository playerProfileRepository,
-            PlayerShipRepository playerShipRepository,
-            SpaceshipRepository spaceshipRepository) {
-        this.playerProfileRepository = playerProfileRepository;
-        this.playerShipRepository = playerShipRepository;
-        this.spaceshipRepository = spaceshipRepository;
-    }
+        PlayerProfileRepository playerProfileRepository,
+        PlayerShipRepository playerShipRepository,
+        SpaceshipRepository spaceshipRepository,
+        WalletService walletService) {
+    this.playerProfileRepository = playerProfileRepository;
+    this.playerShipRepository = playerShipRepository;
+    this.spaceshipRepository = spaceshipRepository;
+    this.walletService = walletService;
+}
 
     private PlayerProfile getProfile(String email) {
         return playerProfileRepository.findByPlayer_Email(email)
@@ -105,42 +108,41 @@ public class SpaceshipService {
 
         return result;
     }
+@Transactional
+public Map<String, Object> purchaseShip(String email, Long shipId) {
+    PlayerProfile profile = getProfile(email);
+    Player player = profile.getPlayer();
 
-    @Transactional
-    public Map<String, Object> purchaseShip(String email, Long shipId) {
-        PlayerProfile profile = getProfile(email);
-        Player player = profile.getPlayer();
+    ensureStarterShip(player);
+    Spaceship ship = getShip(shipId);
 
-        ensureStarterShip(player);
-        Spaceship ship = getShip(shipId);
-
-        if (playerShipRepository.existsByPlayer_EmailAndSpaceship_Id(email, shipId)) {
-            throw new RuntimeException("You already own this ship");
-        }
-
-        if (ship.getPrice() <= 0) {
-            throw new RuntimeException("This ship is available as a starter ship");
-        }
-
-        int currentCredits = profile.getCredits();
-
-        if (currentCredits < ship.getPrice()) {
-            throw new RuntimeException("Not enough credits");
-        }
-
-        int remainingCredits = currentCredits - ship.getPrice();
-
-        profile.setCredits(remainingCredits);
-        player.setCredits(remainingCredits);
-
-        PlayerShip ownership = new PlayerShip(player, ship);
-        playerShipRepository.save(ownership);
-
-        return createResponse(
-                "Spaceship purchased successfully",
-                ship.getShipName(),
-                remainingCredits);
+    if (playerShipRepository.existsByPlayer_EmailAndSpaceship_Id(email, shipId)) {
+        throw new RuntimeException("You already own this ship");
     }
+
+    if (ship.getPrice() <= 0) {
+        throw new RuntimeException("This ship is available as a starter ship");
+    }
+
+    int remainingCredits = walletService.debit(
+            email,
+            ship.getPrice(),
+            "SHIP_PURCHASE",
+            "SPACESHIP",
+            "SHIP_PURCHASE:" + shipId
+    ).getBalance();
+
+    profile.setCredits(remainingCredits);
+
+    PlayerShip ownership = new PlayerShip(player, ship);
+    playerShipRepository.save(ownership);
+
+    return createResponse(
+            "Spaceship purchased successfully",
+            ship.getShipName(),
+            remainingCredits
+    );
+}
 
     @Transactional
     public Map<String, Object> selectShip(String email, Long shipId) {
@@ -166,67 +168,73 @@ public class SpaceshipService {
 
         return response;
     }
+@Transactional
+public Map<String, Object> upgradeShip(
+        String email, Long shipId, String upgradeType) {
 
-    @Transactional
-    public Map<String, Object> upgradeShip(
-            String email, Long shipId, String upgradeType) {
+    PlayerProfile profile = getProfile(email);
 
-        PlayerProfile profile = getProfile(email);
-        Player player = profile.getPlayer();
+    getShip(shipId);
 
-        getShip(shipId);
+    PlayerShip ownership = playerShipRepository
+            .findByPlayer_EmailAndSpaceship_Id(email, shipId)
+            .orElseThrow(() -> new RuntimeException(
+                    "You must own this ship before upgrading"));
 
-        PlayerShip ownership = playerShipRepository
-                .findByPlayer_EmailAndSpaceship_Id(email, shipId)
-                .orElseThrow(() -> new RuntimeException(
-                        "You must own this ship before upgrading"));
-
-        if (ownership.getUpgradeLevel() >= 5) {
-            throw new RuntimeException("Maximum upgrade level reached");
-        }
-
-        int upgradeCost = ownership.getUpgradeLevel() * 250;
-        int currentCredits = profile.getCredits();
-
-        if (currentCredits < upgradeCost) {
-            throw new RuntimeException("Not enough credits");
-        }
-
-        String type = upgradeType == null
-                ? "" : upgradeType.trim().toUpperCase();
-
-        switch (type) {
-            case "HEALTH":
-                ownership.setHealthBonus(ownership.getHealthBonus() + 10);
-                break;
-            case "ATTACK":
-                ownership.setAttackBonus(ownership.getAttackBonus() + 2);
-                break;
-            case "SPEED":
-                ownership.setSpeedBonus(ownership.getSpeedBonus() + 1);
-                break;
-            default:
-                throw new RuntimeException(
-                        "Invalid upgrade type. Use HEALTH, ATTACK or SPEED");
-        }
-
-        ownership.setUpgradeLevel(ownership.getUpgradeLevel() + 1);
-
-        int remainingCredits = currentCredits - upgradeCost;
-        profile.setCredits(remainingCredits);
-        player.setCredits(remainingCredits);
-
-        playerShipRepository.save(ownership);
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("message", "Ship upgraded successfully");
-        response.put("upgradeType", type);
-        response.put("upgradeLevel", ownership.getUpgradeLevel());
-        response.put("creditsSpent", upgradeCost);
-        response.put("creditsRemaining", remainingCredits);
-
-        return response;
+    if (ownership.getUpgradeLevel() >= 5) {
+        throw new RuntimeException("Maximum upgrade level reached");
     }
+
+    String type = upgradeType == null
+            ? "" : upgradeType.trim().toUpperCase();
+
+    switch (type) {
+        case "HEALTH":
+        case "ATTACK":
+        case "SPEED":
+            break;
+        default:
+            throw new RuntimeException(
+                    "Invalid upgrade type. Use HEALTH, ATTACK or SPEED");
+    }
+
+    int upgradeCost = ownership.getUpgradeLevel() * 250;
+
+    int remainingCredits = walletService.debit(
+            email,
+            upgradeCost,
+            "SHIP_UPGRADE",
+            "SPACESHIP_UPGRADE",
+            "SHIP_UPGRADE:" + shipId + ":" + (ownership.getUpgradeLevel() + 1)
+    ).getBalance();
+
+    switch (type) {
+        case "HEALTH":
+            ownership.setHealthBonus(ownership.getHealthBonus() + 10);
+            break;
+        case "ATTACK":
+            ownership.setAttackBonus(ownership.getAttackBonus() + 2);
+            break;
+        case "SPEED":
+            ownership.setSpeedBonus(ownership.getSpeedBonus() + 1);
+            break;
+    }
+
+    ownership.setUpgradeLevel(ownership.getUpgradeLevel() + 1);
+
+    profile.setCredits(remainingCredits);
+
+    playerShipRepository.save(ownership);
+
+    Map<String, Object> response = new LinkedHashMap<>();
+    response.put("message", "Ship upgraded successfully");
+    response.put("upgradeType", type);
+    response.put("upgradeLevel", ownership.getUpgradeLevel());
+    response.put("creditsSpent", upgradeCost);
+    response.put("creditsRemaining", remainingCredits);
+
+    return response;
+}
 
     private Map<String, Object> createResponse(
             String message, String shipName, int credits) {
