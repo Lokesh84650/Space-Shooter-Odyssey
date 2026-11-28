@@ -66,6 +66,5 @@ To develop an interactive full-stack space shooter game while gaining practical 
 
 ---
 
-⭐ If you find this project interesting, feel free to explore the repository and try the live demo!
 
 Developed with ❤️ by Lokesh Pallapu
