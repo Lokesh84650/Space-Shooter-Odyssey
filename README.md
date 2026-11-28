@@ -47,65 +47,7 @@ The application uses a full-stack architecture:
 4. **Authentication:** JWT secures authenticated API requests.
 5. **Deployment:** Vercel hosts the frontend and Railway hosts the backend.
 
-## 📂 Project Structure
 
-```text
-Space-Shooter-Odyssey/
-│
-├── Backend/
-│   └── src/
-│
-├── Frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── game/
-│   │   ├── pages/
-│   │   └── services/
-│   └── package.json
-│
-└── database/
-```
-
-## ⚙️ Run the Project Locally
-
-### Prerequisites
-
-- Java 21
-- Node.js and npm
-- MySQL
-- Git
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Lokesh84650/Space-Shooter-Odyssey.git
-cd Space-Shooter-Odyssey
-```
-
-### 2. Start the frontend
-
-```bash
-cd Frontend
-npm install
-npm run dev
-```
-
-### 3. Start the backend
-
-Open another terminal:
-
-```bash
-cd Backend
-./mvnw spring-boot:run
-```
-
-On Windows PowerShell, use:
-
-```powershell
-.\mvnw.cmd spring-boot:run
-```
-
-Configure your MySQL database and required environment variables before starting the backend.
 
 
 ## 👨‍💻 Developer
@@ -125,3 +67,5 @@ To develop an interactive full-stack space shooter game while gaining practical 
 ---
 
 ⭐ If you find this project interesting, feel free to explore the repository and try the live demo!
+
+Developed with ❤️ by Lokesh Pallapu
